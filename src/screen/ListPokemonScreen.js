@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { NetInfo } from 'react-native';
 import {
-    View, StyleSheet, TouchableOpacity, FlatList, Text, Alert,
+    View, TouchableHighlight, FlatList, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadPokemons } from '../store/pokemon.action';
-import { PokemonListItem} from '../component/PokemonListItem'
+import { PokemonListItem } from '../component/PokemonListItem'
 
 class ListPokemonScreen extends Component {
 
@@ -22,14 +22,20 @@ class ListPokemonScreen extends Component {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
                 this.props.loadPokemons()
-                .then(() => {
-                    if (this.props.pokemonsError !== undefined) {
-                        Alert.alert('Erreur PokeApi', 'Api inaccessible');
-                    }
-                });
+                    .then(() => {
+                        if (this.props.pokemonsError !== undefined) {
+                            Alert.alert('Error PokeApi', 'Api not working')
+                        }
+                    });
             } else {
-                Alert.alert('Problème lors du chargement des données', 'Pas de connexion internet');
+                Alert.alert('Error in data loading', 'No internet connection')
             }
+        });
+    }
+
+    onPressItem = (item) => {
+        this.props.navigation.navigate('Detail', {
+            index: item.index,
         });
     }
 
@@ -40,7 +46,9 @@ class ListPokemonScreen extends Component {
                     data={this.props.pokemons}
                     keyExtractor={item => item.name}
                     renderItem={({ item }) => (
-                        <PokemonListItem name={item.name} url={item.url}/>
+                        <TouchableHighlight onPress={() => this.onPressItem(item)}>
+                            <PokemonListItem index={item.index} name={item.name} url={item.url} />
+                        </TouchableHighlight>
                     )}
                 />
             </View>
@@ -57,6 +65,7 @@ ListPokemonScreen.propTypes = {
 
     pokemons: PropTypes.arrayOf(
         PropTypes.shape({
+            index: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             url: PropTypes.string.isRequired,
         }),
