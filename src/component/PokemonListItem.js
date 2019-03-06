@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Image, Alert } from 'react-native';
+import { StyleSheet, Platform, Text, View, TouchableHighlight, Image, Alert } from 'react-native';
 import { apiUrl } from '../api/APIClient';
 
 export class PokemonListItem extends React.Component {
@@ -7,21 +7,31 @@ export class PokemonListItem extends React.Component {
         super(props);
 
         this.state = {
-            uri: ''
+            uri: '',
+            number: ''
         }
 
-        this.getUrlLastPart = this.getUrlLastPart.bind(this)
+        this.getUriImg = this.getUriImg.bind(this)
+        this.getNumber = this.getNumber.bind(this)
     }
 
-    getUrlLastPart() {
+    getUriImg() {
         const start = apiUrl.length
+        const startNUmber = apiUrl.length + 'pokemon/'.length
+        const end = this.props.url.length - 1
+        return this.props.url.substring(start, end)
+    }
+
+    getNumber() {
+        const start = apiUrl.length + 'pokemon/'.length
         const end = this.props.url.length - 1
         return this.props.url.substring(start, end)
     }
 
     componentWillMount() {
         this.setState({
-            uri: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/'+this.getUrlLastPart()+'.png'
+            uri: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/'+this.getUriImg()+'.png',
+            number: this.getNumber()
         })
     }
 
@@ -29,6 +39,7 @@ export class PokemonListItem extends React.Component {
         return (
             <TouchableHighlight onPress={() => Alert.alert(this.props.url)}>
                 <View style={styles.pokemonItemView}>
+                    <Text style={styles.pokemonNumber}>{this.state.number} </Text>
                     <Image
                         style={styles.pokemonImg}
                         source={{ uri: this.state.uri }}
@@ -46,27 +57,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#F5FCFF',
         alignItems: 'center',
-        margin: 5,
+        margin: Platform.OS === 'ios' ? 2 : 3,
 
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 3,
+        shadowOpacity: 0.10,
+        shadowRadius: Platform.OS === 'ios' ? 1 : 3.84,
+        elevation: Platform.OS === 'ios' ? 1 : 3,
         borderRadius: 5,
     },
-    pokemonName: {
+    pokemonNumber: {
         flex: 1,
-        marginStart: 20,
-        fontSize: 18,
+        textAlign: 'center',
+        fontSize: Platform.OS === 'ios' ? 14 : 18,
+        color: 'black'
+    },
+    pokemonName: {
+        flex: 5,
+        marginStart: 10,
+        fontSize: Platform.OS === 'ios' ? 14 : 18,
         color: 'black'
     },
     pokemonImg: {
-        width: 80,
-        height: 80,
-        marginStart: 10
+        width: Platform.OS === 'ios' ? 50 : 80,
+        height: Platform.OS === 'ios' ? 50 : 80,
     }
 });
