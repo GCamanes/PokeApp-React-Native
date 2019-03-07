@@ -115,7 +115,7 @@ export class DetailPokemonScreen extends React.Component {
                     :
                         <ScrollView style={styles.scrollview}>
                             <View style={styles.pokemonFirstView}>
-                                <View style= {{flex: 1}}>
+                                <View style={styles.pokemonButtonView}>
                                     <Button style={styles.pokemonButton}
                                         onPress={() => {
                                             this.onPressShinyButton()
@@ -139,8 +139,8 @@ export class DetailPokemonScreen extends React.Component {
                                                 { uri: this.state.back_default }
                                     }
                                 />
-                                <View style= {{flex: 1}}>
-                                    <Button style={styles.pokemonButton}
+                                <View style={styles.pokemonButtonView}>
+                                    <Button
                                         onPress={() => {
                                             this.onPressRotateButton()
                                         }}
@@ -167,11 +167,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     pokemonImg: {
-        width: 200,
-        height: 200
+        width: deviceWidth/3,
+        height: deviceWidth/3,
+        marginStart: 20,
+        marginEnd: 20
     },
-    pokemonButton: {
-        
+    pokemonButtonView: {
+        flex: 1,
+        marginStart: Platform.OS === 'ios' ? 5 : 20,
+        marginEnd: Platform.OS === 'ios' ? 5 : 20
     },
     pokemonNameText: {
         fontSize: 25,
