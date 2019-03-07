@@ -6,12 +6,14 @@ import {
 import PokemonUtils  from '../utils/PokemonUtils';
 
 export const initialState = {
-    loading: false,
-    loaded: false,
+    pokemonsLoading: false,
+    pokemonsLoaded: false,
+    pokemonDetailLoading: false,
+    pokemonDetailLoaded: false,
     pokemons: [],
     pokemonDetail: {},
     pokemonsError: undefined,
-    pokemonError: undefined
+    pokemonDetailError: undefined
 };
 
 export function pokemonReducer(state = initialState, action) {
@@ -26,15 +28,15 @@ export function pokemonReducer(state = initialState, action) {
             return {
                 ...state,
                 pokemons: pokemonsWithIndex,
-                loading: false,
-                loaded: true,
+                pokemonsLoading: false,
+                pokemonsLoaded: true,
             };
         }
         case LOAD_POKEMONS: {
             return {
                 ...state,
-                loading: true,
-                loaded: false,
+                pokemonsLoading: true,
+                pokemonsLoaded: false,
             };
         }
 
@@ -43,15 +45,15 @@ export function pokemonReducer(state = initialState, action) {
             return {
                 ...state,
                 pokemonDetail: action.pokemonDetail,
-                loading: false,
-                loaded: true,
+                pokemonDetailLoading: false,
+                pokemonDetailLoaded: true,
             };
         }
         case LOAD_POKEMON_DETAIL: {
             return {
                 ...state,
-                loading: true,
-                loaded: false,
+                pokemonDetailLoading: true,
+                pokemonDetailLoaded: false,
             };
         }
 

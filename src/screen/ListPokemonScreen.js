@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import { NetInfo } from 'react-native';
 import {
     View, TouchableHighlight, FlatList, Alert,
+    Dimensions, StyleSheet,
+    Animated, Image, Easing,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadPokemons } from '../store/pokemon.action';
 import { PokemonListItem } from '../component/PokemonListItem'
+import { pokeballImg } from '../images';
+
+let deviceWidth = Dimensions.get('window').width
+let deviceHeight = Dimensions.get('window').height
 
 class ListPokemonScreen extends Component {
 
@@ -16,9 +22,26 @@ class ListPokemonScreen extends Component {
 
     constructor(props) {
         super(props);
+
+        this.spinValue = new Animated.Value(0)
+    }
+
+    spin() {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 2000,
+                easing: Easing.linear
+            }
+        ).start(() => this.spin())
     }
 
     componentDidMount() {
+
+        this.spin()
+
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
                 this.props.loadPokemons()
@@ -40,21 +63,51 @@ class ListPokemonScreen extends Component {
     }
 
     render() {
+
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
+
         return (
             <View>
-                <FlatList
-                    data={this.props.pokemons}
-                    keyExtractor={item => item.name}
-                    renderItem={({ item }) => (
-                        <TouchableHighlight onPress={() => this.onPressItem(item)}>
-                            <PokemonListItem index={item.index} name={item.name} url={item.url} />
-                        </TouchableHighlight>
-                    )}
-                />
+                {
+                    (this.props.pokemonsLoading) ?
+                        <View style={styles.container}>
+                            <Animated.Image
+                                style={{
+                                    ...styles.pokeballImg,
+                                    transform: [{ rotate: spin }]
+                                }}
+                                source={pokeballImg}
+                            />
+                        </View>
+                        :
+                        <FlatList
+                            data={this.props.pokemons}
+                            keyExtractor={item => item.name}
+                            renderItem={({ item }) => (
+                                <TouchableHighlight onPress={() => this.onPressItem(item)}>
+                                    <PokemonListItem index={item.index} name={item.name} url={item.url} />
+                                </TouchableHighlight>
+                            )}
+                        />
+                }
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        marginTop: deviceHeight/3,
+        alignItems: 'center'
+    },
+    pokeballImg: {
+        width: deviceWidth / 4,
+        height: deviceWidth / 4
+    },
+});
 
 ListPokemonScreen.propTypes = {
     navigation: PropTypes.shape({
@@ -71,12 +124,16 @@ ListPokemonScreen.propTypes = {
         }),
     ).isRequired,
     pokemonsError: PropTypes.string,
+    pokemonsLoading: PropTypes.bool.isRequired,
+    pokemonsLoaded: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
 
     pokemons: state.pokemon.pokemons,
     pokemonsError: state.pokemon.pokemonsError,
+    pokemonsLoading: state.pokemon.pokemonsLoading,
+    pokemonsLoaded: state.pokemon.pokemonsLoaded,
 });
 const mapDispatchToProps = dispatch => ({
     loadPokemons: () => dispatch(loadPokemons()),

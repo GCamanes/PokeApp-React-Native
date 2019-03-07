@@ -1,13 +1,19 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View, Image, Alert } from 'react-native';
+import {
+    Platform, StyleSheet, Text, View, Button,
+    Animated, Image, Easing, Alert
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
-import PokemonUtils  from '../utils/PokemonUtils';
+import PokemonUtils from '../utils/PokemonUtils';
 import { loadPokemonDetail } from '../store/pokemon.action';
 
+import { pokeballImg } from '../images';
+
 let deviceWidth = Dimensions.get('window').width
+let deviceHeight = Dimensions.get('window').height
 
 export class DetailPokemonScreen extends React.Component {
 
@@ -18,14 +24,38 @@ export class DetailPokemonScreen extends React.Component {
     constructor(props) {
         super(props);
 
+        this.spinValue = new Animated.Value(0)
+
         this.state = {
             index: 0,
-            name: 'no name',
-            front_default: "https://image.flaticon.com/icons/png/128/190/190420.png",
+            name: '...',
+            front_default: '',
+            front_shiny: '',
+            back_default: '',
+            back_shiny: '',
+            front: true,
+            shiny: false,
         }
+
+        this.onPressShinyButton = this.onPressShinyButton.bind(this)
+        this.onPressRotateButton = this.onPressRotateButton.bind(this)
     }
 
-    componentWillMount() {
+    spin() {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 2000,
+                easing: Easing.linear
+            }
+        ).start(() => this.spin())
+    }
+
+    componentDidMount() {
+        this.spin()
+
         const { navigation } = this.props;
 
         if (this.props.connectivity === 'online') {
@@ -38,47 +68,124 @@ export class DetailPokemonScreen extends React.Component {
                             index: this.props.pokemonDetail.id,
                             name: this.props.pokemonDetail.name,
                             front_default: this.props.pokemonDetail.sprites.front_default,
+                            front_shiny: this.props.pokemonDetail.sprites.front_shiny,
+                            back_default: this.props.pokemonDetail.sprites.back_default,
+                            back_shiny: this.props.pokemonDetail.sprites.back_shiny,
                         })
                     }
                 });
         } else {
             Alert.alert('Error in data loading', 'No internet connection');
+            this.props.navigation.navigate('List', {});
         }
     }
 
+    onPressShinyButton() {
+        this.setState({
+            shiny: !this.state.shiny
+        })
+    }
+
+    onPressRotateButton() {
+        this.setState({
+            front: !this.state.front
+        })
+    }
+
     render() {
+
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
+
         return (
-            <ScrollView style={styles.scrollview}>
-                <View style={styles.pokemonFirstView}>
-                    <Image style={styles.pokemonImg}
-                        source = {{ uri: this.state.front_default }}    
-                    />
-                    <Text style={styles.pokemonNameText}>{this.state.name.toUpperCase()}</Text>
-                </View>
-            </ScrollView>
-        );
+            <View>
+                {
+                    (this.props.pokemonDetailLoading) ?
+                        < View style={styles.container} >
+                            <Animated.Image
+                                style={{
+                                    ...styles.pokeballImg,
+                                    transform: [{ rotate: spin }]
+                                }}
+                                source={pokeballImg}
+                            />
+                        </View >
+                    :
+                        <ScrollView style={styles.scrollview}>
+                            <View style={styles.pokemonFirstView}>
+                                <View style= {{flex: 1}}>
+                                    <Button style={styles.pokemonButton}
+                                        onPress={() => {
+                                            this.onPressShinyButton()
+                                        }}
+                                        title={(this.state.shiny) ? 'Default' : 'Shiny' }
+                                    />
+                                </View>
+                                <Image style={styles.pokemonImg}
+                                    source={(this.state.front_default.length === 0) ?
+                                        pokeballImg
+                                    :
+                                        (this.state.front) ?
+                                            (this.state.shiny) ?
+                                                { uri: this.state.front_shiny }
+                                                :
+                                                { uri: this.state.front_default }
+                                            :
+                                            (this.state.shiny) ?
+                                                { uri: this.state.back_shiny }
+                                                :
+                                                { uri: this.state.back_default }
+                                    }
+                                />
+                                <View style= {{flex: 1}}>
+                                    <Button style={styles.pokemonButton}
+                                        onPress={() => {
+                                            this.onPressRotateButton()
+                                        }}
+                                        title='Rotate'
+                                    />
+                                </View>
+                            </View>
+                            <Text style={styles.pokemonNameText}>{this.state.name.toUpperCase()}</Text>
+                        </ScrollView>
+                }
+            </View>
+        )
     }
 }
 
 const styles = StyleSheet.create({
     scrollview: {
-        flexDirection: 'column',
-        width: deviceWidth
+        width: deviceWidth,
     },
     pokemonFirstView: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
     },
     pokemonImg: {
-        width: 150,
-        height: 150
+        width: 200,
+        height: 200
+    },
+    pokemonButton: {
+        
     },
     pokemonNameText: {
         fontSize: 25,
         margin: 5,
         color: 'black'
-    }
+    },
+    container: {
+        marginTop: deviceHeight / 3,
+        alignItems: 'center'
+    },
+    pokeballImg: {
+        width: deviceWidth / 4,
+        height: deviceWidth / 4
+    },
 });
 
 DetailPokemonScreen.propTypes = {
@@ -87,11 +194,15 @@ DetailPokemonScreen.propTypes = {
     }).isRequired,
 
     connectivity: PropTypes.string.isRequired,
+    pokemonDetailLoading: PropTypes.bool.isRequired,
+    pokemonDetailLoaded: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     pokemonDetail: state.pokemon.pokemonDetail,
-    pokemonError: state.pokemon.pokemonError,
+    pokemonDetailError: state.pokemon.pokemonError,
+    pokemonDetailLoading: state.pokemon.pokemonsLoading,
+    pokemonDetailLoaded: state.pokemon.pokemonsLoaded,
 });
 const mapDispatchToProps = dispatch => ({
     loadPokemonDetail: (index) => dispatch(loadPokemonDetail(index)),
