@@ -7,10 +7,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
-import PokemonUtils from '../utils/PokemonUtils';
 import { loadPokemonDetail } from '../store/pokemon.action';
 
-import { pokeballImg } from '../images';
+import { pokeballImg, getTypeImg, weigthImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -29,6 +28,16 @@ export class DetailPokemonScreen extends React.Component {
         this.state = {
             index: 0,
             name: '...',
+            type1: 'none',
+            type2: 'none',
+            weight: 0,
+            base_speed: 0,
+            base_special_defense: 0,
+            base_special_attack: 0,
+            base_defense: 0,
+            base_attack: 0,
+            base_hp: 0,
+
             front_default: '',
             front_shiny: '',
             back_default: '',
@@ -65,8 +74,23 @@ export class DetailPokemonScreen extends React.Component {
                         Alert.alert('Error PokeApi', 'Api not working')
                     } else {
                         this.setState({
-                            index: this.props.pokemonDetail.id,
+                            index: (this.props.pokemonDetail.id < 10) ? 
+                                '00'+this.props.pokemonDetail.id : (this.props.pokemonDetail.id < 100) ? 
+                                    '0'+this.props.pokemonDetail.id : this.props.pokemonDetail.id,
                             name: this.props.pokemonDetail.name,
+
+                            type1: (this.props.pokemonDetail.types.length === 2) ?
+                                this.props.pokemonDetail.types[1].type.name : this.props.pokemonDetail.types[0].type.name,
+                            type2: (this.props.pokemonDetail.types.length === 2) ?
+                                this.props.pokemonDetail.types[0].type.name : 'none',
+                            weight: this.props.pokemonDetail.weight,
+                            base_speed: this.props.pokemonDetail.stats[0].base_stat,
+                            base_special_defense: this.props.pokemonDetail.stats[1].base_stat,
+                            base_special_attack: this.props.pokemonDetail.stats[2].base_stat,
+                            base_defense: this.props.pokemonDetail.stats[3].base_stat,
+                            base_attack: this.props.pokemonDetail.stats[4].base_stat,
+                            base_hp: this.props.pokemonDetail.stats[5].base_stat,
+
                             front_default: this.props.pokemonDetail.sprites.front_default,
                             front_shiny: this.props.pokemonDetail.sprites.front_shiny,
                             back_default: this.props.pokemonDetail.sprites.back_default,
@@ -100,7 +124,7 @@ export class DetailPokemonScreen extends React.Component {
         })
 
         return (
-            <View>
+            <View style={{backgroundColor: '#F5FCFF'}}>
                 {
                     (this.props.pokemonDetailLoading) ?
                         < View style={styles.container} >
@@ -114,7 +138,7 @@ export class DetailPokemonScreen extends React.Component {
                         </View >
                     :
                         <ScrollView style={styles.scrollview}>
-                            <View style={styles.pokemonFirstView}>
+                            <View style={styles.pokemonShowCaseView}>
                                 <View style={styles.pokemonButtonView}>
                                     <Button style={styles.pokemonButton}
                                         onPress={() => {
@@ -148,7 +172,50 @@ export class DetailPokemonScreen extends React.Component {
                                     />
                                 </View>
                             </View>
-                            <Text style={styles.pokemonNameText}>{this.state.name.toUpperCase()}</Text>
+                            {
+                                (this.state.index !== 0) ? 
+                                <View>
+                                    <View style={styles.pokemonNameIndexView}>
+                                        <Text style={styles.pokemonNameText}>
+                                            #{this.state.index} -- {this.state.name.toUpperCase()}
+                                        </Text>
+                                    </View>
+
+                                    <View style={styles.pokemonTypeView}>
+                                        <Image style={styles.typeImg} source={getTypeImg(this.state.type1)}/>
+                                        {this.state.type2 !== 'none' &&
+                                            <Image style={styles.typeImg} source={getTypeImg(this.state.type2)}/>
+                                        }
+                                    </View>
+                                    
+                                    <View style={styles.pokemonWeightView}>
+                                        <Image style={styles.weightImg} source={weigthImg}/>
+                                        <Text style={styles.pokemonNameText}>{this.state.weight}</Text>
+                                    </View>
+                                    
+                                    
+
+                                    <View style={{flex:1, height: 5, backgroundColor: 'gray'}}/>
+
+                                    <Text style={styles.pokemonNameText}>{this.state.base_speed}</Text>
+                                    <Text style={styles.pokemonNameText}>{this.state.base_special_defense}</Text>
+                                    <Text style={styles.pokemonNameText}>{this.state.base_special_attack}</Text>
+                                    <Text style={styles.pokemonNameText}>{this.state.base_defense}</Text>
+                                    <Text style={styles.pokemonNameText}>{this.state.base_attack}</Text>
+                                    <Text style={styles.pokemonNameText}>{this.state.base_hp}</Text>
+                                </View>
+                                :
+                                < View style={styles.container2} >
+                                    <Animated.Image
+                                        style={{
+                                            ...styles.pokeballImg,
+                                            transform: [{ rotate: spin }]
+                                        }}
+                                        source={pokeballImg}
+                                    />
+                                </View >
+                            }
+                            
                         </ScrollView>
                 }
             </View>
@@ -160,11 +227,13 @@ const styles = StyleSheet.create({
     scrollview: {
         width: deviceWidth,
     },
-    pokemonFirstView: {
+
+    pokemonShowCaseView: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 10,
     },
     pokemonImg: {
         width: deviceWidth/3,
@@ -182,8 +251,41 @@ const styles = StyleSheet.create({
         margin: 5,
         color: 'black'
     },
+
+    pokemonNameIndexView: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    pokemonTypeView: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    typeImg: {
+        width: deviceWidth/3,
+        height: 196 * ((deviceWidth/3)/520),
+        margin: 15
+    },
+    pokemonWeightView: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    weightImg: {
+        width: deviceWidth/6,
+        height: deviceWidth/6
+    },
+
     container: {
         marginTop: deviceHeight / 3,
+        alignItems: 'center'
+    },
+    container2: {
+        marginTop: deviceHeight / 4,
         alignItems: 'center'
     },
     pokeballImg: {
