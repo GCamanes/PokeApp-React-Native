@@ -9,8 +9,11 @@
   "dependencies": {
     "prop-types": "^15.7.2",
     "react": "16.6.3",
+    "react-art": "^16.8.4",
+    "react-dom": "^16.8.4",
     "react-native": "0.58.6",
     "react-native-gesture-handler": "^1.1.0",
+    "react-native-web": "^0.10.1",
     "react-navigation": "^3.3.2",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
