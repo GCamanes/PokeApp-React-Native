@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
 import { loadPokemonDetail } from '../store/pokemon.action';
 
-import { pokeballImg, getTypeImg, weigthImg } from '../images';
+import { pokeballImg, getTypeImg, weightImg, heightImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -96,36 +96,32 @@ export class DetailPokemonScreen extends React.Component {
                         </View>
                     </View>
 
-                    <View>
-                        <View style={styles.pokemonNameIndexView}>
-                            <Text style={styles.pokemonNameText}>
-                                {this.state.pokemon.index_3Digits} -- {this.state.pokemon.name.toUpperCase()}
-                            </Text>
-                        </View>
-
-                        <View style={styles.pokemonTypeView}>
-                            <Image style={styles.typeImg} source={getTypeImg(this.state.pokemontype1)}/>
-                            {this.state.pokemon.type2 !== 'none' &&
-                                <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type2)}/>
-                            }
-                        </View>
-                        
-                        <View style={styles.pokemonWeightView}>
-                            <Image style={styles.weightImg} source={weigthImg}/>
-                            <Text style={styles.pokemonNameText}>{this.state.pokemon.weight}</Text>
-                        </View>
-                        
-                        
-
-                        <View style={{flex:1, height: 5, backgroundColor: 'gray'}}/>
-
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_attack}</Text>
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_defense}</Text>
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_attack}</Text>
-                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_hp}</Text>
+                    <View style={styles.pokemonNameIndexView}>
+                        <Text style={styles.pokemonNameText}>
+                            #{this.state.pokemon.index_3Digits} -- {this.state.pokemon.name.toUpperCase()}
+                        </Text>
                     </View>
+
+                    <View style={styles.pokemonTypeView}>
+                        <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type1)}/>
+                        {this.state.pokemon.type2 !== 'none' &&
+                            <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type2)}/>
+                        }
+                    </View>
+                    
+                    <View style={styles.pokemonBodyView}>
+                        <Image style={styles.bodyImg} source={weightImg}/>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.weight}</Text>
+                        <Image style={styles.bodyImg} source={heightImg}/>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.height}</Text>
+                    </View>
+
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_attack}</Text>
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_defense}</Text>
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_attack}</Text>
+                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_hp}</Text>
                 </ScrollView>
             </View>
         )
@@ -135,6 +131,7 @@ export class DetailPokemonScreen extends React.Component {
 const styles = StyleSheet.create({
     scrollview: {
         width: deviceWidth,
+        backgroundColor: '#F5FCFF',
     },
 
     pokemonShowCaseView: {
@@ -142,7 +139,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 10,
     },
     pokemonImg: {
         width: deviceWidth/3,
@@ -155,6 +151,7 @@ const styles = StyleSheet.create({
         marginStart: Platform.OS === 'ios' ? 5 : 20,
         marginEnd: Platform.OS === 'ios' ? 5 : 20
     },
+
     pokemonNameText: {
         fontSize: 25,
         margin: 5,
@@ -178,15 +175,15 @@ const styles = StyleSheet.create({
         height: 196 * ((deviceWidth/3)/520),
         margin: 15
     },
-    pokemonWeightView: {
+    pokemonBodyView: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    weightImg: {
-        width: deviceWidth/6,
-        height: deviceWidth/6
+    bodyImg: {
+        width: deviceWidth/8,
+        height: deviceWidth/8
     },
 });
 

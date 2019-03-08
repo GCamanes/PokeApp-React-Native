@@ -1,6 +1,7 @@
 export const pokeballImg = require('./pokeball.png');
 
-export const weigthImg = require('./weigth-icon.png');
+export const weightImg = require('./weight-icon.png');
+export const heightImg = require('./height-icon.png');
 
 // 196 h 520 w
 export const typeImg = {
