@@ -1,35 +1,31 @@
 import React from 'react';
-import { StyleSheet, Platform, Text, View, Image, Alert } from 'react-native';
+import { StyleSheet, Platform, Text, View, Image, Alert, Dimensions } from 'react-native';
 import PokemonUtils  from '../utils/PokemonUtils';
+
+import { getTypeImg } from '../images';
+let deviceWidth = Dimensions.get('window').width
+let deviceHeight = Dimensions.get('window').height
 
 export class PokemonListItem extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            uri: '',
-        }
-    }
-
-    componentWillMount() {
-        this.setState({
-            uri: PokemonUtils.getUriImg(this.props.url),
-        })
-    }
-
-    navigateToPokemonDetail() {
-        this.props.navigation.navigate('DetailPokemon') 
     }
 
     render() {
         return (
             <View style={styles.pokemonItemView}>
-                <Text style={styles.pokemonIndex}>{this.props.index} </Text>
+                <Text style={styles.pokemonIndex}>#{this.props.pokemon.index_3Digits} </Text>
                 <Image
                     style={styles.pokemonImg}
-                    source={{ uri: this.state.uri }}
+                    source={{ uri: this.props.pokemon.front_default}}
                 />
-                <Text style={styles.pokemonName}>{this.props.name.toUpperCase()}</Text>
+                <Text style={styles.pokemonName}>{this.props.pokemon.name.toUpperCase()}</Text>
+                <View style={styles.pokemonTypeView}>
+                    <Image style={styles.typeImg} source={getTypeImg(this.props.pokemon.type1)}/>
+                    {this.props.pokemon.type2 !== 'none' &&
+                        <Image style={styles.typeImg} source={getTypeImg(this.props.pokemon.type2)}/>
+                    }
+                </View>
             </View>
         );
     }
@@ -53,10 +49,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     pokemonIndex: {
-        flex: 1,
+        flex: 1.5,
         textAlign: 'center',
         fontSize: Platform.OS === 'ios' ? 14 : 18,
-        color: 'black'
+        color: 'black',
+        margin: Platform.OS === 'ios' ? 2 : 3,
     },
     pokemonName: {
         flex: 5,
@@ -65,7 +62,18 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     pokemonImg: {
-        width: Platform.OS === 'ios' ? 50 : 80,
-        height: Platform.OS === 'ios' ? 50 : 80,
-    }
+        width: deviceWidth/7,
+        height: deviceWidth/7,
+    },
+    pokemonTypeView: {
+        flex: 3,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    typeImg: {
+        width: deviceWidth/9,
+        height: 196 * ((deviceWidth/9)/520),
+        margin: 2,
+    },
 });

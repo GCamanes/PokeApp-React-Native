@@ -26,82 +26,13 @@ export class DetailPokemonScreen extends React.Component {
         this.spinValue = new Animated.Value(0)
 
         this.state = {
-            index: 0,
-            name: '...',
-            type1: 'none',
-            type2: 'none',
-            weight: 0,
-            base_speed: 0,
-            base_special_defense: 0,
-            base_special_attack: 0,
-            base_defense: 0,
-            base_attack: 0,
-            base_hp: 0,
-
-            front_default: '',
-            front_shiny: '',
-            back_default: '',
-            back_shiny: '',
             front: true,
             shiny: false,
+            pokemon: {}
         }
 
         this.onPressShinyButton = this.onPressShinyButton.bind(this)
         this.onPressRotateButton = this.onPressRotateButton.bind(this)
-    }
-
-    spin() {
-        this.spinValue.setValue(0)
-        Animated.timing(
-            this.spinValue,
-            {
-                toValue: 1,
-                duration: 2000,
-                easing: Easing.linear
-            }
-        ).start(() => this.spin())
-    }
-
-    componentDidMount() {
-        this.spin()
-
-        const { navigation } = this.props;
-
-        if (this.props.connectivity === 'online') {
-            this.props.loadPokemonDetail(navigation.getParam('index', 132))
-                .then(() => {
-                    if (this.props.pokemonError !== undefined) {
-                        Alert.alert('Error PokeApi', 'Api not working')
-                    } else {
-                        this.setState({
-                            index: (this.props.pokemonDetail.id < 10) ? 
-                                '00'+this.props.pokemonDetail.id : (this.props.pokemonDetail.id < 100) ? 
-                                    '0'+this.props.pokemonDetail.id : this.props.pokemonDetail.id,
-                            name: this.props.pokemonDetail.name,
-
-                            type1: (this.props.pokemonDetail.types.length === 2) ?
-                                this.props.pokemonDetail.types[1].type.name : this.props.pokemonDetail.types[0].type.name,
-                            type2: (this.props.pokemonDetail.types.length === 2) ?
-                                this.props.pokemonDetail.types[0].type.name : 'none',
-                            weight: this.props.pokemonDetail.weight,
-                            base_speed: this.props.pokemonDetail.stats[0].base_stat,
-                            base_special_defense: this.props.pokemonDetail.stats[1].base_stat,
-                            base_special_attack: this.props.pokemonDetail.stats[2].base_stat,
-                            base_defense: this.props.pokemonDetail.stats[3].base_stat,
-                            base_attack: this.props.pokemonDetail.stats[4].base_stat,
-                            base_hp: this.props.pokemonDetail.stats[5].base_stat,
-
-                            front_default: this.props.pokemonDetail.sprites.front_default,
-                            front_shiny: this.props.pokemonDetail.sprites.front_shiny,
-                            back_default: this.props.pokemonDetail.sprites.back_default,
-                            back_shiny: this.props.pokemonDetail.sprites.back_shiny,
-                        })
-                    }
-                });
-        } else {
-            Alert.alert('Error in data loading', 'No internet connection');
-            this.props.navigation.navigate('List', {});
-        }
     }
 
     onPressShinyButton() {
@@ -116,108 +47,86 @@ export class DetailPokemonScreen extends React.Component {
         })
     }
 
-    render() {
-
-        const spin = this.spinValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0deg', '360deg']
+    componentWillMount() {
+        const { navigation } = this.props;
+        this.setState({
+            pokemon: navigation.getParam('pokemon', {})
         })
+    }
+
+    render() {
 
         return (
             <View style={{backgroundColor: '#F5FCFF'}}>
-                {
-                    (this.props.pokemonDetailLoading) ?
-                        < View style={styles.container} >
-                            <Animated.Image
-                                style={{
-                                    ...styles.pokeballImg,
-                                    transform: [{ rotate: spin }]
+                
+                <ScrollView style={styles.scrollview}>
+                    <View style={styles.pokemonShowCaseView}>
+                        <View style={styles.pokemonButtonView}>
+                            <Button style={styles.pokemonButton}
+                                onPress={() => {
+                                    this.onPressShinyButton()
                                 }}
-                                source={pokeballImg}
+                                title={(this.state.shiny) ? 'Default' : 'Shiny' }
                             />
-                        </View >
-                    :
-                        <ScrollView style={styles.scrollview}>
-                            <View style={styles.pokemonShowCaseView}>
-                                <View style={styles.pokemonButtonView}>
-                                    <Button style={styles.pokemonButton}
-                                        onPress={() => {
-                                            this.onPressShinyButton()
-                                        }}
-                                        title={(this.state.shiny) ? 'Default' : 'Shiny' }
-                                    />
-                                </View>
-                                <Image style={styles.pokemonImg}
-                                    source={(this.state.front_default.length === 0) ?
-                                        pokeballImg
-                                    :
-                                        (this.state.front) ?
-                                            (this.state.shiny) ?
-                                                { uri: this.state.front_shiny }
-                                                :
-                                                { uri: this.state.front_default }
+                        </View>
+                        <Image style={styles.pokemonImg}
+                            source={
+                                (this.props.connectivity === 'online')?
+                                    (this.state.front) ?
+                                        (this.state.shiny) ?
+                                            { uri: this.state.pokemon.front_shiny }
                                             :
-                                            (this.state.shiny) ?
-                                                { uri: this.state.back_shiny }
-                                                :
-                                                { uri: this.state.back_default }
-                                    }
-                                />
-                                <View style={styles.pokemonButtonView}>
-                                    <Button
-                                        onPress={() => {
-                                            this.onPressRotateButton()
-                                        }}
-                                        title='Rotate'
-                                    />
-                                </View>
-                            </View>
-                            {
-                                (this.state.index !== 0) ? 
-                                <View>
-                                    <View style={styles.pokemonNameIndexView}>
-                                        <Text style={styles.pokemonNameText}>
-                                            #{this.state.index} -- {this.state.name.toUpperCase()}
-                                        </Text>
-                                    </View>
-
-                                    <View style={styles.pokemonTypeView}>
-                                        <Image style={styles.typeImg} source={getTypeImg(this.state.type1)}/>
-                                        {this.state.type2 !== 'none' &&
-                                            <Image style={styles.typeImg} source={getTypeImg(this.state.type2)}/>
-                                        }
-                                    </View>
-                                    
-                                    <View style={styles.pokemonWeightView}>
-                                        <Image style={styles.weightImg} source={weigthImg}/>
-                                        <Text style={styles.pokemonNameText}>{this.state.weight}</Text>
-                                    </View>
-                                    
-                                    
-
-                                    <View style={{flex:1, height: 5, backgroundColor: 'gray'}}/>
-
-                                    <Text style={styles.pokemonNameText}>{this.state.base_speed}</Text>
-                                    <Text style={styles.pokemonNameText}>{this.state.base_special_defense}</Text>
-                                    <Text style={styles.pokemonNameText}>{this.state.base_special_attack}</Text>
-                                    <Text style={styles.pokemonNameText}>{this.state.base_defense}</Text>
-                                    <Text style={styles.pokemonNameText}>{this.state.base_attack}</Text>
-                                    <Text style={styles.pokemonNameText}>{this.state.base_hp}</Text>
-                                </View>
-                                :
-                                < View style={styles.container2} >
-                                    <Animated.Image
-                                        style={{
-                                            ...styles.pokeballImg,
-                                            transform: [{ rotate: spin }]
-                                        }}
-                                        source={pokeballImg}
-                                    />
-                                </View >
+                                            { uri: this.state.pokemon.front_default }
+                                        :
+                                        (this.state.shiny) ?
+                                            { uri: this.state.pokemon.back_shiny }
+                                            :
+                                            { uri: this.state.pokemon.back_default }
+                                    :
+                                    pokeballImg
                             }
-                            
-                        </ScrollView>
-                }
+                        />
+                        <View style={styles.pokemonButtonView}>
+                            <Button
+                                onPress={() => {
+                                    this.onPressRotateButton()
+                                }}
+                                title='Rotate'
+                            />
+                        </View>
+                    </View>
+
+                    <View>
+                        <View style={styles.pokemonNameIndexView}>
+                            <Text style={styles.pokemonNameText}>
+                                {this.state.pokemon.index_3Digits} -- {this.state.pokemon.name.toUpperCase()}
+                            </Text>
+                        </View>
+
+                        <View style={styles.pokemonTypeView}>
+                            <Image style={styles.typeImg} source={getTypeImg(this.state.pokemontype1)}/>
+                            {this.state.pokemon.type2 !== 'none' &&
+                                <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type2)}/>
+                            }
+                        </View>
+                        
+                        <View style={styles.pokemonWeightView}>
+                            <Image style={styles.weightImg} source={weigthImg}/>
+                            <Text style={styles.pokemonNameText}>{this.state.pokemon.weight}</Text>
+                        </View>
+                        
+                        
+
+                        <View style={{flex:1, height: 5, backgroundColor: 'gray'}}/>
+
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_attack}</Text>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_defense}</Text>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_attack}</Text>
+                        <Text style={styles.pokemonNameText}>{this.state.pokemon.base_hp}</Text>
+                    </View>
+                </ScrollView>
             </View>
         )
     }
@@ -279,19 +188,6 @@ const styles = StyleSheet.create({
         width: deviceWidth/6,
         height: deviceWidth/6
     },
-
-    container: {
-        marginTop: deviceHeight / 3,
-        alignItems: 'center'
-    },
-    container2: {
-        marginTop: deviceHeight / 4,
-        alignItems: 'center'
-    },
-    pokeballImg: {
-        width: deviceWidth / 4,
-        height: deviceWidth / 4
-    },
 });
 
 DetailPokemonScreen.propTypes = {
@@ -300,18 +196,12 @@ DetailPokemonScreen.propTypes = {
     }).isRequired,
 
     connectivity: PropTypes.string.isRequired,
-    pokemonDetailLoading: PropTypes.bool.isRequired,
-    pokemonDetailLoaded: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
-    pokemonDetail: state.pokemon.pokemonDetail,
-    pokemonDetailError: state.pokemon.pokemonError,
-    pokemonDetailLoading: state.pokemon.pokemonsLoading,
-    pokemonDetailLoaded: state.pokemon.pokemonsLoaded,
 });
 const mapDispatchToProps = dispatch => ({
-    loadPokemonDetail: (index) => dispatch(loadPokemonDetail(index)),
+
 });
 export default connect(
     mapStateToProps,

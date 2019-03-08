@@ -38,6 +38,12 @@ class ListPokemonScreen extends Component {
         ).start(() => this.spin())
     }
 
+    onPressItem = (item) => {
+        this.props.navigation.navigate('Detail', {
+            pokemon: item,
+        });
+    }
+
     componentDidMount() {
 
         this.spin()
@@ -53,12 +59,6 @@ class ListPokemonScreen extends Component {
             } else {
                 Alert.alert('Error in data loading', 'No internet connection')
             }
-        });
-    }
-
-    onPressItem = (item) => {
-        this.props.navigation.navigate('Detail', {
-            index: item.index,
         });
     }
 
@@ -88,7 +88,7 @@ class ListPokemonScreen extends Component {
                             keyExtractor={item => item.name}
                             renderItem={({ item }) => (
                                 <TouchableHighlight onPress={() => this.onPressItem(item)}>
-                                    <PokemonListItem index={item.index} name={item.name} url={item.url} />
+                                    <PokemonListItem pokemon={item}/>
                                 </TouchableHighlight>
                             )}
                         />
@@ -118,9 +118,8 @@ ListPokemonScreen.propTypes = {
 
     pokemons: PropTypes.arrayOf(
         PropTypes.shape({
-            index: PropTypes.string.isRequired,
+            index: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired,
-            url: PropTypes.string.isRequired,
         }),
     ).isRequired,
     pokemonsError: PropTypes.string,
