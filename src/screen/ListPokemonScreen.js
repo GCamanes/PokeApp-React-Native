@@ -40,7 +40,7 @@ class ListPokemonScreen extends Component {
 
     onPressItem = (item) => {
         this.props.navigation.navigate('Detail', {
-            pokemon: item,
+            index: item.index,
         });
     }
 

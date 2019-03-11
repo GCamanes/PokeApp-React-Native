@@ -50,15 +50,16 @@ export class DetailPokemonScreen extends React.Component {
     componentWillMount() {
         const { navigation } = this.props;
         this.setState({
-            pokemon: navigation.getParam('pokemon', {})
+            pokemon: this.props.pokemons[navigation.getParam('index', {}) - 1],
+            evolutionChains: this.props.evolutionChains[navigation.getParam('index', {}) - 1]
         })
     }
 
     render() {
 
         return (
-            <View style={{backgroundColor: '#F5FCFF'}}>
-                
+            <View style={styles.mainView}>
+
                 <ScrollView style={styles.scrollview}>
                     <View style={styles.pokemonShowCaseView}>
                         <View style={styles.pokemonButtonView}>
@@ -66,12 +67,12 @@ export class DetailPokemonScreen extends React.Component {
                                 onPress={() => {
                                     this.onPressShinyButton()
                                 }}
-                                title={(this.state.shiny) ? 'Default' : 'Shiny' }
+                                title={(this.state.shiny) ? 'Default' : 'Shiny'}
                             />
                         </View>
                         <Image style={styles.pokemonImg}
                             source={
-                                (this.props.connectivity === 'online')?
+                                (this.props.connectivity === 'online') ?
                                     (this.state.front) ?
                                         (this.state.shiny) ?
                                             { uri: this.state.pokemon.front_shiny }
@@ -103,18 +104,31 @@ export class DetailPokemonScreen extends React.Component {
                     </View>
 
                     <View style={styles.pokemonTypeView}>
-                        <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type1)}/>
+                        <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type1)} />
                         {this.state.pokemon.type2 !== 'none' &&
-                            <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type2)}/>
+                            <Image style={styles.typeImg} source={getTypeImg(this.state.pokemon.type2)} />
                         }
                     </View>
-                    
+
                     <View style={styles.pokemonBodyView}>
-                        <Image style={styles.bodyImg} source={weightImg}/>
+                        <Image style={styles.bodyImg} source={weightImg} />
                         <Text style={styles.pokemonNameText}>{this.state.pokemon.weight}</Text>
-                        <Image style={styles.bodyImg} source={heightImg}/>
+                        <Image style={styles.bodyImg} source={heightImg} />
                         <Text style={styles.pokemonNameText}>{this.state.pokemon.height}</Text>
                     </View>
+
+                    <View style={styles.evolutionsView}>
+                        {
+                            this.state.evolutionChains.map((item, indexChain) =>
+                                <View style={styles.evolutionView} key={this.state.pokemon.name+"_evo_"+indexChain}>
+                                    {
+                                        item.map((indexEvo) => <Text key={this.state.pokemon.name+"_evo_"+indexChain+"_"+indexEvo}>{indexEvo}</Text>)
+                                    }
+                                </View>
+                            )
+                        }
+                    </View>
+
 
                     <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
                     <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
@@ -129,6 +143,12 @@ export class DetailPokemonScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+
+    mainView: {
+        height: deviceHeight,
+        backgroundColor: '#F5FCFF'
+    },
+
     scrollview: {
         width: deviceWidth,
         backgroundColor: '#F5FCFF',
@@ -141,8 +161,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     pokemonImg: {
-        width: deviceWidth/3,
-        height: deviceWidth/3,
+        width: deviceWidth / 3,
+        height: deviceWidth / 3,
         marginStart: 20,
         marginEnd: 20
     },
@@ -171,8 +191,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     typeImg: {
-        width: deviceWidth/3,
-        height: 196 * ((deviceWidth/3)/520),
+        width: deviceWidth / 3,
+        height: 196 * ((deviceWidth / 3) / 520),
         margin: 15
     },
     pokemonBodyView: {
@@ -182,9 +202,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     bodyImg: {
-        width: deviceWidth/8,
-        height: deviceWidth/8
+        width: deviceWidth / 8,
+        height: deviceWidth / 8
     },
+
+    evolutionsView: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    evolutionView: {
+        width: deviceWidth * 0.9,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'gray'
+    }
+
 });
 
 DetailPokemonScreen.propTypes = {
@@ -196,6 +231,8 @@ DetailPokemonScreen.propTypes = {
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
+    pokemons: state.pokemon.pokemons,
+    evolutionChains: state.pokemon.evolutionChains,
 });
 const mapDispatchToProps = dispatch => ({
 

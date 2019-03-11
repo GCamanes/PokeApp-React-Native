@@ -1,6 +1,6 @@
+import PokemonUtils from "../utils/PokemonUtils"
+
 export const apiUrl = "https://pokeapi.co/api/v2/"
-export const pokeImgUrlPart = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/'
-export const pokeImgFileExtension = '.png'
 
 export default class APIClient {
     static getPokemonList() {
@@ -16,20 +16,52 @@ export default class APIClient {
             .catch();
     }
 
-    static getPokemonDetail(index) {
-        return fetch(apiUrl + 'pokemon/' + index + '/',
-            {
+    static getPokemonEvolutionChain(pokemon) {
+        return fetch(pokemon.species_url,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(responseJSON => {
+            return fetch(responseJSON.evolution_chain.url, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 method: 'GET',
             })
             .then(response => response.json())
-            .then(responseJSON => responseJSON)
+            .then(responseJSON => {
+
+                var result = []
+
+                if (responseJSON.chain.evolves_to.length !== 0) {
+                    responseJSON.chain.evolves_to.map((item) => {
+                        var index1 = parseInt(PokemonUtils.getPokemonIndex(apiUrl, 'pokemon-species/', responseJSON.chain.species.url), 10)
+                        var index2 = parseInt(PokemonUtils.getPokemonIndex(apiUrl, 'pokemon-species/', item.species.url), 10)
+                        if (item.evolves_to.length === 0) {
+                            result.push([index1, index2])
+                        } else {
+                            item.evolves_to.map((item2) => {
+                                var index3 = parseInt(PokemonUtils.getPokemonIndex(apiUrl, 'pokemon-species/', item2.species.url), 10)
+                                result.push([
+                                    index1, index2, index3
+                                ])
+                            })
+                        }
+                    })
+                }
+
+                return PokemonUtils.cleanEvolutionChainFirstGenOnly(result)
+            })
             .catch();
+        })
+        .catch();
     }
 
-    static getPokemonDetailWithUrl(url) {
+    static getPokemonDetail(url) {
         return fetch(url,
             {
                 headers: {
@@ -63,6 +95,8 @@ export default class APIClient {
                     front_shiny: responseJSON.sprites.front_shiny,
                     back_default: responseJSON.sprites.back_default,
                     back_shiny: responseJSON.sprites.back_shiny,
+
+                    species_url: responseJSON.species.url
                 }
             })
             .catch();

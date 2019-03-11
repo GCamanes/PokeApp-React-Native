@@ -1,5 +1,5 @@
 import {
-    POKEMONS_LOADED, LOAD_POKEMONS,
+    POKEMONS_LOADED, LOAD_EVOLUTION_CHAINS, LOAD_POKEMONS,
 } from './pokemon.action';
 
 import PokemonUtils  from '../utils/PokemonUtils';
@@ -10,6 +10,7 @@ export const initialState = {
     pokemonDetailLoading: false,
     pokemonDetailLoaded: false,
     pokemons: [],
+    evolutionChains: [],
     pokemonDetail: {},
     pokemonsError: undefined,
     pokemonDetailError: undefined
@@ -20,9 +21,15 @@ export function pokemonReducer(state = initialState, action) {
         case POKEMONS_LOADED: {
             return {
                 ...state,
-                pokemons: action.pokemons,
+                evolutionChains: action.evolutionChains,
                 pokemonsLoading: false,
                 pokemonsLoaded: true,
+            };
+        }
+        case LOAD_EVOLUTION_CHAINS: {
+            return {
+                ...state,
+                pokemons: action.pokemons,
             };
         }
         case LOAD_POKEMONS: {
