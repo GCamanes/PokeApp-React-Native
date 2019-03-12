@@ -4,8 +4,13 @@ export const weightImg = require('./weight-icon.png');
 export const heightImg = require('./height-icon.png');
 export const rightArrowImg = require('./right-arrow-icon.png');
 export const leftArrowImg = require('./left-arrow-icon.png');
+export const starShinyImg = require('./star-shiny-icon.png');
 export const starNotShinyImg = require('./star-not-shiny-icon.png');
 export const rotateImg = require('./rotate-icon.png');
+export const rotatePhotoImg = require('./rotate-photo-icon.png');
+export const dnaImg = require('./dna-icon.png');
+export const identityImg = require('./identity-icon.png');
+export const statImg = require('./stat-icon.png');
 
 // 196 h 520 w
 export const typeImg = {
