@@ -7,7 +7,7 @@ export default class PokemonUtils {
         return url.substring(start, end)
     }
 
-    static cleanEvolutionChainFirstGenOnly(chains) {
+    static cleanEvolutionChainFirstGenOnly(chains, index) {
         if (chains.length === 0) {
             return chains
         } else {
@@ -15,11 +15,13 @@ export default class PokemonUtils {
             chains.map((item) => {
                 var newChain = item.filter(index => index <= 151)
 
-                if (newChain.length === item.length) {
-                    newChains.push(newChain)
-                } else {
-                    if (chains.length === 1 && newChain.length > 1) {
+                if (newChain.includes(index)) {
+                    if (newChain.length === item.length) {
                         newChains.push(newChain)
+                    } else {
+                        if (chains.length === 1 && newChain.length > 1) {
+                            newChains.push(newChain)
+                        }
                     }
                 }
             })

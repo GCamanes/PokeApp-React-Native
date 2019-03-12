@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NetInfo } from 'react-native';
 import {
-    View, TouchableHighlight, FlatList, Alert,
+    View, TouchableOpacity, FlatList, Alert,
     Dimensions, StyleSheet,
     Animated, Image, Easing,
 } from 'react-native';
@@ -87,9 +87,9 @@ class ListPokemonScreen extends Component {
                             data={this.props.pokemons}
                             keyExtractor={item => item.name}
                             renderItem={({ item }) => (
-                                <TouchableHighlight onPress={() => this.onPressItem(item)}>
+                                <TouchableOpacity onPress={() => this.onPressItem(item)}>
                                     <PokemonListItem pokemon={item}/>
-                                </TouchableHighlight>
+                                </TouchableOpacity>
                             )}
                         />
                 }

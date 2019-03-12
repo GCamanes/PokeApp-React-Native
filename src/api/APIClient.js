@@ -54,7 +54,7 @@ export default class APIClient {
                     })
                 }
 
-                return PokemonUtils.cleanEvolutionChainFirstGenOnly(result)
+                return PokemonUtils.cleanEvolutionChainFirstGenOnly(result, pokemon.index)
             })
             .catch();
         })

@@ -1,7 +1,8 @@
 import React from 'react';
 import {
     Platform, StyleSheet, Text, View, Button,
-    Animated, Image, Easing, Alert
+    Animated, Image, Easing, Alert, TouchableHighlight,
+    TouchableOpacity
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
@@ -9,7 +10,10 @@ import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
 import { loadPokemonDetail } from '../store/pokemon.action';
 
-import { pokeballImg, getTypeImg, weightImg, heightImg } from '../images';
+import {
+    pokeballImg, getTypeImg, weightImg, heightImg,
+    rightArrowImg, leftArrowImg, starNotShinyImg, rotateImg
+} from '../images';
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -33,6 +37,8 @@ export class DetailPokemonScreen extends React.Component {
 
         this.onPressShinyButton = this.onPressShinyButton.bind(this)
         this.onPressRotateButton = this.onPressRotateButton.bind(this)
+        this.handleUpdatePokemonIndex = this.handleUpdatePokemonIndex.bind(this)
+        this.goToTop = this.goToTop.bind(this)
     }
 
     onPressShinyButton() {
@@ -45,6 +51,20 @@ export class DetailPokemonScreen extends React.Component {
         this.setState({
             front: !this.state.front
         })
+    }
+
+    handleUpdatePokemonIndex = (index) => {
+        this.goToTop()
+        this.setState({
+            pokemon: this.props.pokemons[index - 1],
+            evolutionChains: this.props.evolutionChains[index - 1],
+            front: true,
+            shiny: false,
+        })
+    }
+
+    goToTop = () => {
+        this.scroll.scrollTo({ x: 0, y: 0, animated: true });
     }
 
     componentWillMount() {
@@ -60,15 +80,17 @@ export class DetailPokemonScreen extends React.Component {
         return (
             <View style={styles.mainView}>
 
-                <ScrollView style={styles.scrollview}>
+                <ScrollView style={styles.scrollview} ref={(c) => {this.scroll = c}}>
                     <View style={styles.pokemonShowCaseView}>
-                        <View style={styles.pokemonButtonView}>
-                            <Button style={styles.pokemonButton}
-                                onPress={() => {
-                                    this.onPressShinyButton()
-                                }}
-                                title={(this.state.shiny) ? 'Default' : 'Shiny'}
-                            />
+                        <View style={styles.pokemonNavigateView}>
+                            {
+                                (this.state.pokemon.index > 1) &&
+                                <TouchableOpacity onPress={() => this.handleUpdatePokemonIndex(this.state.pokemon.index - 1)}>
+                                    <Image style={styles.arrowImg}
+                                        source={leftArrowImg}
+                                    />
+                                </TouchableOpacity>
+                            }
                         </View>
                         <Image style={styles.pokemonImg}
                             source={
@@ -87,15 +109,28 @@ export class DetailPokemonScreen extends React.Component {
                                     pokeballImg
                             }
                         />
-                        <View style={styles.pokemonButtonView}>
-                            <Button
-                                onPress={() => {
-                                    this.onPressRotateButton()
-                                }}
-                                title='Rotate'
-                            />
+                        <View style={styles.pokemonNavigateView}>
+                            {
+                                (this.state.pokemon.index < 151) &&
+                                <TouchableOpacity onPress={() => this.handleUpdatePokemonIndex(this.state.pokemon.index + 1)}>
+                                    <Image style={styles.arrowImg}
+                                        source={rightArrowImg}
+                                    />
+                                </TouchableOpacity>
+                            }
                         </View>
                     </View>
+
+                    <TouchableOpacity onPress={() => this.onPressShinyButton()}>
+                        <Image style={{ height: 100, width: 100 }}
+                            source={starNotShinyImg}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.onPressRotateButton()}>
+                        <Image style={{ height: 100, width: 100 }}
+                            source={rotateImg}
+                        />
+                    </TouchableOpacity>
 
                     <View style={styles.pokemonNameIndexView}>
                         <Text style={styles.pokemonNameText}>
@@ -120,15 +155,27 @@ export class DetailPokemonScreen extends React.Component {
                     <View style={styles.evolutionsView}>
                         {
                             this.state.evolutionChains.map((item, indexChain) =>
-                                <View style={styles.evolutionView} key={this.state.pokemon.name+"_evo_"+indexChain}>
+                                <View style={styles.evolutionView} key={this.state.pokemon.name + "_evo_" + indexChain}>
                                     {
-                                        item.map((indexEvo) => <Text key={this.state.pokemon.name+"_evo_"+indexChain+"_"+indexEvo}>{indexEvo}</Text>)
+                                        item.map((indexEvo, index) =>
+                                            <View style={styles.evolutionViewPart} key={this.state.pokemon.name + "_evo_" + indexChain + "_" + indexEvo}>
+                                                {index > 0 && <Image style={styles.evolutionArrowImg} source={rightArrowImg} />}
+                                                <TouchableOpacity onPress={() => this.handleUpdatePokemonIndex(indexEvo)}>
+                                                    <Image style={styles.pokemonEvolutionImg}
+                                                        source={
+                                                            (this.props.connectivity === 'online') ?
+                                                                { uri: this.props.pokemons[indexEvo - 1].front_default }
+                                                                :
+                                                                pokeballImg
+                                                        }
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>)
                                     }
                                 </View>
                             )
                         }
                     </View>
-
 
                     <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
                     <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
@@ -145,7 +192,6 @@ export class DetailPokemonScreen extends React.Component {
 const styles = StyleSheet.create({
 
     mainView: {
-        height: deviceHeight,
         backgroundColor: '#F5FCFF'
     },
 
@@ -166,12 +212,15 @@ const styles = StyleSheet.create({
         marginStart: 20,
         marginEnd: 20
     },
-    pokemonButtonView: {
-        flex: 1,
-        marginStart: Platform.OS === 'ios' ? 5 : 20,
-        marginEnd: Platform.OS === 'ios' ? 5 : 20
+    pokemonNavigateView: {
+        width: deviceWidth / 3,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-
+    arrowImg: {
+        height: 50,
+        width: 50
+    },
     pokemonNameText: {
         fontSize: 25,
         margin: 5,
@@ -213,12 +262,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     evolutionView: {
-        width: deviceWidth * 0.9,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'gray'
-    }
+        margin: 5
+    },
+    evolutionViewPart: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    pokemonEvolutionImg: {
+        width: deviceWidth / 4,
+        height: deviceWidth / 4,
+        margin: 5,
+    },
+    evolutionArrowImg: {
+        width: deviceWidth / 20,
+        height: deviceWidth / 20
+    },
 
 });
 
