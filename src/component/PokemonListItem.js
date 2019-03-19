@@ -3,8 +3,8 @@ import { StyleSheet, Platform, Text, View, Image, Alert, Dimensions } from 'reac
 import PokemonUtils  from '../utils/PokemonUtils';
 
 import { getTypeImg } from '../images';
+import { mainBackgroundColor } from '../colors'
 let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
 
 export class PokemonListItem extends React.Component {
     constructor(props) {
@@ -34,7 +34,7 @@ export class PokemonListItem extends React.Component {
 const styles = StyleSheet.create({
     pokemonItemView: {
         flexDirection: 'row',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: mainBackgroundColor,
         alignItems: 'center',
         margin: Platform.OS === 'ios' ? 2 : 3,
 

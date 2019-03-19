@@ -12,12 +12,15 @@ import {
     dnaImg, identityImg, statImg
 } from '../images';
 
+import { mainBackgroundColor } from '../colors'
+
 import { DetailScreenSubTitleView } from '../component/DetailScreenSubTitleView'
 import PokemonShowCaseView from '../component/PokemonShowCaseView'
 import EvolutionChainsView from '../component/EvolutionChainsView'
 import { PokemonTypeView } from '../component/PokemonTypeView'
 import { PokemonBodyView } from '../component/PokemonBodyView'
 import { InteractionUserView } from '../component/InteractionUserView'
+import { PokemonStatView } from '../component/PokemonStatView'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -25,7 +28,7 @@ let deviceHeight = Dimensions.get('window').height
 export class DetailPokemonScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Pokemon details'
+        title: 'Pokemon detail'
     }
 
     constructor(props) {
@@ -140,12 +143,10 @@ export class DetailPokemonScreen extends React.Component {
                         titleImg={statImg}
                     />
 
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_speed}</Text>
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_defense}</Text>
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_special_attack}</Text>
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_defense}</Text>
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_attack}</Text>
-                    <Text style={styles.pokemonNameText}>{this.state.pokemon.base_hp}</Text>
+                    <PokemonStatView
+                        pokemon={this.state.pokemon}
+                        deviceWidth={deviceWidth}
+                    />
                 </ScrollView>
             </View>
         )
@@ -155,12 +156,12 @@ export class DetailPokemonScreen extends React.Component {
 const styles = StyleSheet.create({
 
     mainView: {
-        backgroundColor: '#F5FCFF'
+        backgroundColor: mainBackgroundColor
     },
 
     scrollview: {
         width: deviceWidth,
-        backgroundColor: '#F5FCFF',
+        backgroundColor: mainBackgroundColor,
     },
 });
 
