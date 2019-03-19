@@ -91,32 +91,27 @@ export class DetailPokemonScreen extends React.Component {
                 <ScrollView style={styles.scrollview} ref={(c) => {this.scroll = c}}>
                     <PokemonShowCaseView
                         pokemon={this.state.pokemon}
-                        deviceWidth={deviceWidth}
                         shiny={this.state.shiny}
                         front={this.state.front}
                         handleUpdatePokemonIndex={this.handleUpdatePokemonIndex}
                     />
 
                     <InteractionUserView
-                        deviceWidth={deviceWidth}
                         shiny={this.state.shiny}
                         onPressShinyButton={this.onPressShinyButton}
                         onPressRotateButton={this.onPressRotateButton}
                     />
 
                     <DetailScreenSubTitleView
-                        deviceWidth={deviceWidth}
                         title={'#'+this.state.pokemon.index_3Digits+'  '+this.state.pokemon.name.toUpperCase()}
                         titleImg={identityImg}
                     />
 
                     <PokemonTypeView
-                        deviceWidth={deviceWidth}
                         type1={this.state.pokemon.type1}
                         type2={this.state.pokemon.type2}
                     />
                     <PokemonBodyView
-                        deviceWidth={deviceWidth}
                         weight={this.state.pokemon.weight}
                         height={this.state.pokemon.height}
                     />
@@ -124,7 +119,6 @@ export class DetailPokemonScreen extends React.Component {
                     {
                         (this.state.evolutionChains.length > 0) &&
                             <DetailScreenSubTitleView 
-                                deviceWidth={deviceWidth}
                                 title='Evolution chain'
                                 titleImg={dnaImg}
                             />
@@ -133,19 +127,16 @@ export class DetailPokemonScreen extends React.Component {
                     <EvolutionChainsView
                         pokemon={this.state.pokemon}
                         evolutionChains={this.state.evolutionChains}
-                        deviceWidth={deviceWidth}
                         handleUpdatePokemonIndex={this.handleUpdatePokemonIndex}
                     />
 
                     <DetailScreenSubTitleView 
-                        deviceWidth={deviceWidth}
                         title='Base stats'
                         titleImg={statImg}
                     />
 
                     <PokemonStatView
                         pokemon={this.state.pokemon}
-                        deviceWidth={deviceWidth}
                     />
                 </ScrollView>
             </View>

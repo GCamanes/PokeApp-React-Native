@@ -12,6 +12,9 @@ export const dnaImg = require('./dna-icon.png');
 export const identityImg = require('./identity-icon.png');
 export const statImg = require('./stat-icon.png');
 
+export const typeHeightImg = 196;
+export const typeWidthImg = 520;
+
 // 196 h 520 w
 export const typeImg = {
     bug: require('./type-bug.png'),

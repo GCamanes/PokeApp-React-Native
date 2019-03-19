@@ -3,6 +3,9 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { pokeballImg, rightArrowImg } from '../images';
 
+import { Dimensions } from 'react-native'
+let deviceWidth = Dimensions.get('window').width
+
 export class EvolutionChainsView extends React.Component {
     constructor(props) {
         super(props);
@@ -22,18 +25,14 @@ export class EvolutionChainsView extends React.Component {
                                         {
                                             index > 0 && 
                                             <Image
-                                                style={{
-                                                    width: this.props.deviceWidth / 20,
-                                                    height: this.props.deviceWidth / 20
-                                                }}
+                                                style={styles.arrowImg}
                                                 source={rightArrowImg}
                                             />
                                         }
                                         <TouchableOpacity onPress={() => this.props.handleUpdatePokemonIndex(indexEvo)}>
                                             <Image
                                                 style={{
-                                                    width: this.props.deviceWidth / 4,
-                                                    height: this.props.deviceWidth / 4,
+                                                    ...styles.pokemonImg,
                                                     margin: 5,
                                                 }}
                                                 source={
@@ -71,6 +70,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    arrowImg: {
+        width: deviceWidth / 20,
+        height: deviceWidth / 20
+    },
+    pokemonImg: {
+        width: deviceWidth / 4,
+        height: deviceWidth / 4,
+    }
 });
 
 const mapStateToProps = state => ({

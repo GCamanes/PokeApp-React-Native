@@ -6,6 +6,9 @@ import {
     rotatePhotoImg,
 } from '../images';
 
+import { Dimensions } from 'react-native'
+let deviceWidth = Dimensions.get('window').width
+
 export class InteractionUserView extends React.Component {
     constructor(props) {
         super(props);
@@ -16,23 +19,13 @@ export class InteractionUserView extends React.Component {
             <View style={styles.interactionUserView}>
                 <TouchableOpacity onPress={() => this.props.onPressShinyButton()}>
                     <Image
-                        style={{
-                            width: this.props.deviceWidth / 8,
-                            height: this.props.deviceWidth / 8,
-                            marginStart: this.props.deviceWidth / 8,
-                            marginEnd: this.props.deviceWidth / 8,
-                        }}
+                        style={styles.interactionUserImg}
                         source={(this.props.shiny) ? starShinyImg : starNotShinyImg}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.props.onPressRotateButton()}>
                     <Image
-                        style={{
-                            width: this.props.deviceWidth / 8,
-                            height: this.props.deviceWidth / 8,
-                            marginStart: this.props.deviceWidth / 8,
-                            marginEnd: this.props.deviceWidth / 8,
-                        }}
+                        style={styles.interactionUserImg}
                         source={rotatePhotoImg}
                     />
                 </TouchableOpacity>
@@ -47,4 +40,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    interactionUserImg: {
+        width: deviceWidth / 8,
+        height: deviceWidth / 8,
+        marginStart: deviceWidth / 8,
+        marginEnd: deviceWidth / 8,
+    }
 });

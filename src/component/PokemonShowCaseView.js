@@ -5,6 +5,8 @@ import {
     pokeballImg, rightArrowImg, leftArrowImg,
 } from '../images';
 
+import { Dimensions } from 'react-native'
+let deviceWidth = Dimensions.get('window').width
 
 export class PokemonShowCaseView extends React.Component {
     constructor(props) {
@@ -15,10 +17,7 @@ export class PokemonShowCaseView extends React.Component {
         return (
             <View style={styles.pokemonShowCaseView}>
                 <View 
-                    style={{
-                        ...styles.pokemonNavigateView,
-                        width: this.props.deviceWidth / 3,
-                    }}
+                    style={styles.pokemonNavigateView}
                 >
                     {
                         (this.props.pokemon.index > 1) &&
@@ -30,11 +29,7 @@ export class PokemonShowCaseView extends React.Component {
                     }
                 </View>
                 <Image
-                    style={{
-                        ...styles.pokemonImg,
-                        width: this.props.deviceWidth / 3,
-                        height: this.props.deviceWidth / 3,
-                    }}
+                    style={styles.pokemonImg}
                     source={
                         (this.props.connectivity === 'online') ?
                             (this.props.front) ?
@@ -52,10 +47,7 @@ export class PokemonShowCaseView extends React.Component {
                     }
                 />
                 <View 
-                    style={{
-                        ...styles.pokemonNavigateView,
-                        width: this.props.deviceWidth / 3,
-                    }}
+                    style={styles.pokemonNavigateView}
                 >
                     {
                         (this.props.pokemon.index < 151) &&
@@ -82,10 +74,13 @@ const styles = StyleSheet.create({
     pokemonNavigateView: {
         alignItems: 'center',
         justifyContent: 'center',
+        width: deviceWidth / 3,
     },
     pokemonImg: {
         marginStart: 20,
-        marginEnd: 20
+        marginEnd: 20,
+        width: deviceWidth / 3,
+        height: deviceWidth / 3,
     },
     arrowImg: {
         height: 50,

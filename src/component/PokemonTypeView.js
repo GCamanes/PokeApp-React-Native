@@ -1,7 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 
-import { getTypeImg } from '../images';
+import { getTypeImg, typeHeightImg, typeWidthImg } from '../images';
+
+import { Dimensions } from 'react-native'
+let deviceWidth = Dimensions.get('window').width
 
 export class PokemonTypeView extends React.Component {
     constructor(props) {
@@ -12,20 +15,12 @@ export class PokemonTypeView extends React.Component {
         return (
             <View style={styles.pokemonTypeView}>
                 <Image
-                    style={{
-                        ...styles.typeImg,
-                        width: this.props.deviceWidth / 3,
-                        height: 196 * ((this.props.deviceWidth / 3) / 520),
-                    }}
+                    style={styles.typeImg}
                     source={getTypeImg(this.props.type1)}
                 />
                 {this.props.type2 !== 'none' &&
                     <Image
-                        style={{
-                            ...styles.typeImg,
-                            width: this.props.deviceWidth / 3,
-                            height: 196 * ((this.props.deviceWidth / 3) / 520),
-                        }}
+                        style={styles.typeImg}
                         source={getTypeImg(this.props.type2)}
                     />
                 }
@@ -42,6 +37,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     typeImg: {
-        margin: 15
+        margin: 15,
+        width: deviceWidth / 3,
+        height: typeHeightImg * ((deviceWidth / 3) / typeWidthImg),
     },
 });

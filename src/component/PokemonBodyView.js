@@ -3,6 +3,9 @@ import { StyleSheet, View, Image, Text } from 'react-native';
 
 import { weightImg, heightImg } from '../images';
 
+import { Dimensions } from 'react-native'
+let deviceWidth = Dimensions.get('window').width
+
 export class PokemonBodyView extends React.Component {
     constructor(props) {
         super(props);
@@ -12,18 +15,14 @@ export class PokemonBodyView extends React.Component {
         return (
             <View style={styles.pokemonBodyView}>
                 <Image
-                    style={{
-                        width: this.props.deviceWidth / 8,
-                        height: this.props.deviceWidth / 8
-                    }}
+                    style={styles.bodyImg}
                     source={weightImg}
                 />
                 <Text style={styles.bodyText}>{this.props.weight/10.0} kg</Text>
                 <Image
                     style={{
+                        ...styles.bodyImg,
                         marginStart: 15,
-                        width: this.props.deviceWidth / 8,
-                        height: this.props.deviceWidth / 8
                     }}
                     source={heightImg}
                 />
@@ -39,6 +38,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    bodyImg: {
+        width: deviceWidth / 8,
+        height: deviceWidth / 8
     },
     bodyText: {
         fontSize: 25,
