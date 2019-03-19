@@ -18,7 +18,7 @@ export class PokemonBodyView extends React.Component {
                     }}
                     source={weightImg}
                 />
-                <Text style={styles.bodyText}>{this.props.weight}</Text>
+                <Text style={styles.bodyText}>{this.props.weight/10.0} kg</Text>
                 <Image
                     style={{
                         marginStart: 15,
@@ -27,7 +27,7 @@ export class PokemonBodyView extends React.Component {
                     }}
                     source={heightImg}
                 />
-                <Text style={styles.bodyText}>{this.props.height}</Text>
+                <Text style={styles.bodyText}>{this.props.height/10.0} m</Text>
             </View>
         );
     }
