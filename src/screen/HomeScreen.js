@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadPokemons } from '../store/pokemon.action';
 import { PokemonListItem } from '../component/PokemonListItem';
-import { BottomBarView } from '../component/BottomBarView';
+import { FilterBarView } from '../component/FilterBarView';
 import { pokeballImg } from '../images';
-import { mainBackgroundColor } from '../colors';
+import { mainBackgroundColor, statColor } from '../colors';
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
