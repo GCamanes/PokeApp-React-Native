@@ -70,7 +70,7 @@ class ListPokemonScreen extends Component {
         })
 
         return (
-            <View>
+            <View style={{justifyContent:'center', alignItems:'center'}}>
                 {
                     (this.props.pokemonsLoading) ?
                         <View style={styles.container}>
@@ -85,6 +85,7 @@ class ListPokemonScreen extends Component {
                         :
                         <FlatList
                             data={this.props.pokemons}
+                            numColumns={2}
                             keyExtractor={item => item.name}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => this.onPressItem(item)}>
