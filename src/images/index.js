@@ -11,6 +11,8 @@ export const rotatePhotoImg = require('./rotate-photo-icon.png');
 export const dnaImg = require('./dna-icon.png');
 export const identityImg = require('./identity-icon.png');
 export const statImg = require('./stat-icon.png');
+export const listImg = require('./list-icon.png');
+export const pokemonBallImg = require('./pokemon-ball-icon.png');
 
 export const typeHeightImg = 196;
 export const typeWidthImg = 520;

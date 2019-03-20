@@ -42,27 +42,16 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: mainBackgroundColor,
         alignItems: 'center',
-        margin: Platform.OS === 'ios' ? 2 : 3,
-        width: deviceWidth * 0.48,
+        width: deviceWidth * 0.5,
         height: deviceHeight / 6,
-
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: Platform.OS === 'ios' ? 1 : 3.84,
-        elevation: Platform.OS === 'ios' ? 1 : 3,
-        borderRadius: 5,
     },
     pokemonTextView: {
         flexDirection: 'row',
-        width: deviceWidth * 0.48,
+        width: deviceWidth * 0.5,
     },
     pokemonImgView: {
         flexDirection: 'row',
-        width: deviceWidth * 0.48,
+        width: deviceWidth * 0.5,
     },
     pokemonIndex: {
         textAlign: 'center',

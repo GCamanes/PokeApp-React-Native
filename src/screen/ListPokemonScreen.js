@@ -8,7 +8,8 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadPokemons } from '../store/pokemon.action';
-import { PokemonListItem } from '../component/PokemonListItem'
+import { PokemonListItem } from '../component/PokemonListItem';
+import { BottomBarView } from '../component/BottomBarView';
 import { pokeballImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width
@@ -24,6 +25,12 @@ class ListPokemonScreen extends Component {
         super(props);
 
         this.spinValue = new Animated.Value(0)
+
+        this.state = {
+            showingListType: "list",
+        }
+
+        this.onPressBottomBarItem = this.onPressBottomBarItem.bind(this)
     }
 
     spin() {
@@ -42,6 +49,14 @@ class ListPokemonScreen extends Component {
         this.props.navigation.navigate('Detail', {
             index: item.index,
         });
+    }
+
+    onPressBottomBarItem(typeList) {
+        if (this.state.showingListType != typeList) {
+            this.setState({
+                showingListType: typeList
+            })
+        }
     }
 
     componentDidMount() {
@@ -83,16 +98,19 @@ class ListPokemonScreen extends Component {
                             />
                         </View>
                         :
-                        <FlatList
-                            data={this.props.pokemons}
-                            numColumns={2}
-                            keyExtractor={item => item.name}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                    <PokemonListItem pokemon={item}/>
-                                </TouchableOpacity>
-                            )}
-                        />
+                        <View>
+                            <FlatList
+                                data={this.props.pokemons}
+                                numColumns={2}
+                                keyExtractor={item => item.name}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => this.onPressItem(item)}>
+                                        <PokemonListItem pokemon={item}/>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            <BottomBarView showingListType={this.state.showingListType} onPressBottomBarItem={this.onPressBottomBarItem}/>
+                        </View>
                 }
             </View>
         )
