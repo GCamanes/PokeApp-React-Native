@@ -11,6 +11,7 @@ import { loadPokemons } from '../store/pokemon.action';
 import { PokemonListItem } from '../component/PokemonListItem';
 import { BottomBarView } from '../component/BottomBarView';
 import { pokeballImg } from '../images';
+import { mainBackgroundColor } from '../colors';
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -98,7 +99,7 @@ class ListPokemonScreen extends Component {
                             />
                         </View>
                         :
-                        <View>
+                        <View style={{backgroundColor: mainBackgroundColor}}>
                             <FlatList
                                 data={this.props.pokemons}
                                 numColumns={2}
