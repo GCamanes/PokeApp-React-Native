@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NetInfo } from 'react-native';
 import {
-    View, TouchableOpacity, FlatList, Alert,
+    View, TouchableOpacity, FlatList, Alert, Text,
     Dimensions, StyleSheet,
     Animated, Image, Easing,
 } from 'react-native';
@@ -30,8 +30,6 @@ class HomeScreen extends Component {
         this.state = {
             showingListType: "list",
         }
-
-        this.onPressBottomBarItem = this.onPressBottomBarItem.bind(this)
     }
 
     spin() {
@@ -50,14 +48,6 @@ class HomeScreen extends Component {
         this.props.navigation.navigate('Detail', {
             index: item.index,
         });
-    }
-
-    onPressBottomBarItem(typeList) {
-        if (this.state.showingListType != typeList) {
-            this.setState({
-                showingListType: typeList
-            })
-        }
     }
 
     componentDidMount() {
@@ -86,7 +76,7 @@ class HomeScreen extends Component {
         })
 
         return (
-            <View style={{justifyContent:'center', alignItems:'center'}}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 {
                     (this.props.pokemonsLoading) ?
                         <View style={styles.container}>
@@ -99,18 +89,18 @@ class HomeScreen extends Component {
                             />
                         </View>
                         :
-                        <View style={{backgroundColor: mainBackgroundColor}}>
+                        <View style={{ backgroundColor: mainBackgroundColor }}>
                             <FlatList
                                 data={this.props.pokemons}
-                                numColumns={2}
+                                numColumns={4}
+                                initialNumToRender={50}
                                 keyExtractor={item => item.name}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                        <PokemonListItem pokemon={item}/>
+                                        <PokemonListItem pokemon={item} />
                                     </TouchableOpacity>
                                 )}
                             />
-                            <BottomBarView showingListType={this.state.showingListType} onPressBottomBarItem={this.onPressBottomBarItem}/>
                         </View>
                 }
             </View>
@@ -120,7 +110,7 @@ class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: deviceHeight/3,
+        marginTop: deviceHeight / 3,
         alignItems: 'center'
     },
     pokeballImg: {
