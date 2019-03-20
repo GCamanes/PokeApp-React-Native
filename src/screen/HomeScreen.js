@@ -16,7 +16,7 @@ import { mainBackgroundColor } from '../colors';
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
-class ListPokemonScreen extends Component {
+class HomeScreen extends Component {
 
     static navigationOptions = ({ navigation }) => ({
         headerTitle: 'Pokemon list',
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     },
 });
 
-ListPokemonScreen.propTypes = {
+HomeScreen.propTypes = {
     navigation: PropTypes.shape({
         navigate: PropTypes.func.isRequired,
     }).isRequired,
@@ -160,4 +160,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(ListPokemonScreen);
+)(HomeScreen);

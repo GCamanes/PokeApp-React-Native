@@ -1,14 +1,14 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation';
-import ListPokemonScreen from './ListPokemonScreen';
+import HomeScreen from './HomeScreen';
 import DetailPokemonScreen from './DetailPokemonScreen';
 
 const AppNavigator = createStackNavigator(
     {
-        List: ListPokemonScreen,
+        Home: HomeScreen,
         Detail: DetailPokemonScreen,
     },
     {
-        initialRouteName: 'List',
+        initialRouteName: 'Home',
     },
 );
 
